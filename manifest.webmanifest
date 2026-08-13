@@ -1,0 +1,19 @@
+{
+  "name": "Days Since We Fought",
+  "short_name": "DSWF",
+  "description": "Track peaceful family streaks and celebrate the days since you fought.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f1e9",
+  "theme_color": "#171717",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
