@@ -29,8 +29,9 @@ async function refreshDSWFApp() {
   try {
     if ('serviceWorker' in navigator) {
       const registration = await navigator.serviceWorker.getRegistration();
-      if (registration) await registration.update();
+      if (registration) await registration.unregister();
     }
+
     const url = new URL(window.location.href);
     url.searchParams.set('update', Date.now().toString());
     window.location.replace(url.toString());
