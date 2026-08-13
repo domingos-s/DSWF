@@ -30,6 +30,9 @@
         const empty = hub.querySelector('.insight-empty');
         if (!empty || typeof state === 'undefined') return;
         const count = Array.isArray(state.journalEntries) ? state.journalEntries.length : 0;
+        const progressKey = String(count);
+        if (empty.dataset.progressCount === progressKey) return;
+        empty.dataset.progressCount = progressKey;
         const remaining = Math.max(0, 3 - count);
         empty.innerHTML = `<div class="journal-hub-copy"><span class="journal-icon">💡</span><div><strong>Building your insights…</strong><small>${count} reflection${count === 1 ? '' : 's'} recorded. ${remaining ? `Initial pattern detection begins after ${remaining} more reflection${remaining === 1 ? '' : 's'}.` : 'DSWF has enough entries to test for patterns, but none meet the evidence thresholds yet.'}</small></div></div><div style="min-width:120px;text-align:right"><strong style="display:block;font-size:13px">${Math.min(count,3)} / 3</strong><small style="display:block;color:var(--muted);font-size:10px">toward initial patterns</small></div>`;
       };
