@@ -1,6 +1,6 @@
 // DSWF release note shown in Settings.
-const DSWF_VERSION = '1.1';
-const DSWF_LATEST_FEATURE = 'Journaling, Registry, and Calendar View';
+const DSWF_VERSION = '1.2';
+const DSWF_LATEST_FEATURE = 'Insights Engine, Structured Journaling, Trends, and Experiments';
 
 const baseOpenSettingsWithVersion = openSettings;
 openSettings = function openSettingsWithVersion() {
