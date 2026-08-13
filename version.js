@@ -1,31 +1,57 @@
-// DSWF release note shown in Settings.
+// DSWF release/version footer.
 const DSWF_VERSION = '1.2';
 const DSWF_LATEST_FEATURE = 'Insights Engine, Structured Journaling, Trends, and Experiments';
 
-const baseOpenSettingsWithVersion = openSettings;
-openSettings = function openSettingsWithVersion() {
-  baseOpenSettingsWithVersion();
-  const modal = [...document.querySelectorAll('.modal-backdrop .modal')].at(-1);
-  if (!modal || modal.querySelector('.version-note')) return;
+function renderVersionFooter() {
+  if (!state.onboardingComplete) return;
+  const footer = document.querySelector('.app-shell footer');
+  if (!footer || footer.querySelector('.footer-version-row')) return;
 
-  const note = document.createElement('div');
-  note.className = 'version-note';
-  note.innerHTML = `
-    <div class="version-note-top">
-      <span class="version-badge">VERSION ${DSWF_VERSION}</span>
-      <span class="version-new">LATEST UPDATE</span>
-    </div>
-    <strong>${DSWF_LATEST_FEATURE}</strong>
-    <small>New in Version ${DSWF_VERSION}</small>
+  const row = document.createElement('div');
+  row.className = 'footer-version-row';
+  row.innerHTML = `
+    <span>Version ${DSWF_VERSION}</span>
+    <span aria-hidden="true">·</span>
+    <button type="button" class="footer-update-link" id="updateAppLink">Update App</button>
   `;
+  footer.append(row);
 
-  const heading = modal.querySelector('h2');
-  if (heading) heading.insertAdjacentElement('afterend', note);
-  else modal.prepend(note);
-};
+  footer.querySelector('#updateAppLink').onclick = refreshDSWFApp;
+}
+
+async function refreshDSWFApp() {
+  const button = document.querySelector('#updateAppLink');
+  if (button) {
+    button.disabled = true;
+    button.textContent = 'Updating…';
+  }
+
+  try {
+    if ('serviceWorker' in navigator) {
+      const registration = await navigator.serviceWorker.getRegistration();
+      if (registration) await registration.update();
+    }
+    const url = new URL(window.location.href);
+    url.searchParams.set('update', Date.now().toString());
+    window.location.replace(url.toString());
+  } catch (error) {
+    console.error('DSWF update failed', error);
+    if (button) {
+      button.disabled = false;
+      button.textContent = 'Update App';
+    }
+    toast('Could not update the app. Check your connection and try again.');
+  }
+}
 
 const versionStyle = document.createElement('style');
 versionStyle.textContent = `
-.version-note{margin:10px 0 18px;padding:15px 16px;border:1px solid var(--line);border-radius:18px;background:#f3ede2}.version-note-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}.version-badge,.version-new{font-size:9px;font-weight:950;letter-spacing:.12em}.version-badge{color:var(--ink)}.version-new{color:var(--accent-dark)}.version-note strong{display:block;font-size:14px;line-height:1.35}.version-note small{display:block;color:var(--muted);font-size:10px;margin-top:5px}.modal{max-height:calc(100vh - 24px);overflow-y:auto}
+.footer-version-row{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:7px;font-size:10px;color:var(--muted)}
+.footer-update-link{appearance:none;border:0;background:transparent;padding:0;color:var(--accent-dark);font:inherit;font-weight:850;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.footer-update-link:disabled{opacity:.55;cursor:default;text-decoration:none}
 `;
 document.head.append(versionStyle);
+
+const versionObserver = new MutationObserver(renderVersionFooter);
+versionObserver.observe(document.querySelector('#app'), { childList: true, subtree: true });
+renderVersionFooter();
