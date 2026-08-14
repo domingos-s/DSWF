@@ -1,6 +1,6 @@
 // DSWF release/version footer.
-const DSWF_VERSION = '1.4';
-const DSWF_LATEST_FEATURE = 'Simmer Down: cool-down game, outcome tracking, and intervention insights';
+const DSWF_VERSION = '1.5';
+const DSWF_LATEST_FEATURE = 'Simmer Down History: visible intervention log, check-ins, and outcomes';
 
 function renderVersionFooter() {
   if (!state.onboardingComplete) return;
