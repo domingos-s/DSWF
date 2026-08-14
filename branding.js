@@ -27,6 +27,9 @@ brandingStyle.textContent = `
 .dswf-header-logo{width:116px;height:116px;object-fit:contain;flex:0 0 auto}
 .app-shell .topbar{gap:14px}
 .app-shell .topbar>div{flex:1;min-width:0}
+.app-shell .logo-title{line-height:1.05}
+.app-shell .logo-title br+br{display:none}
+.app-shell .logo-title span{display:block}
 @media(max-width:520px){.dswf-header-logo{width:96px;height:96px}.app-shell .topbar{gap:10px}}
 `;
 document.head.append(brandingStyle);
