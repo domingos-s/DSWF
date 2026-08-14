@@ -1,6 +1,6 @@
 // DSWF release/version footer.
-const DSWF_VERSION = '1.3';
-const DSWF_LATEST_FEATURE = 'Insights Engine, Structured Journaling, Trends, and Experiments';
+const DSWF_VERSION = '1.4';
+const DSWF_LATEST_FEATURE = 'Simmer Down: cool-down game, outcome tracking, and intervention insights';
 
 function renderVersionFooter() {
   if (!state.onboardingComplete) return;
