@@ -1,5 +1,5 @@
 // DSWF release/version footer.
-const DSWF_VERSION = '1.2';
+const DSWF_VERSION = '1.3';
 const DSWF_LATEST_FEATURE = 'Insights Engine, Structured Journaling, Trends, and Experiments';
 
 function renderVersionFooter() {
