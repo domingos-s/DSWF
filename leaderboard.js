@@ -23,15 +23,10 @@ function leaderboardMetrics(people = state.people) {
   const maxFights = fightValues.length ? Math.max(...fightValues) : 0;
 
   return rows.map(row => {
-    // Best current streak receives 100% of the streak component.
     const streakComponent = maxStreak > 0 ? row.streakMs / maxStreak : 0;
-
-    // Fewest fights receives 100% of the fight component. If everyone has the
-    // same count, fight history is neutral and everyone receives equal credit.
     const fightComponent = maxFights === minFights
       ? 1
       : (maxFights - row.fights) / (maxFights - minFights);
-
     const peaceScore = (streakComponent * 0.75) + (fightComponent * 0.25);
     return { ...row, streakComponent, fightComponent, peaceScore };
   }).sort((a, b) =>
@@ -49,14 +44,21 @@ function formatLeaderboardStreak(ms) {
   return `${s.minutes}m`;
 }
 
-// Replace the original dashboard renderer so live cards and leaderboard share
-// the corrected ordering. Other modules can continue decorating the dashboard.
+function formatCombinedPeace(ms) {
+  const totalHours = Math.max(0, Math.floor(ms / 3600000));
+  const days = Math.floor(totalHours / 24);
+  const hours = totalHours % 24;
+  if (days > 0) return { primary: days, secondary: `${hours}h`, label: 'combined peace time' };
+  return { primary: hours, secondary: 'h', label: 'combined peace time' };
+}
+
 renderDashboard = function renderDashboardWithPeaceScore() {
   const app = document.querySelector('#app');
   const metrics = leaderboardMetrics(state.people);
   const ranked = metrics.map(row => row.person);
   const active = state.people.filter(p => p.startedAt);
-  const totalPeaceDays = active.reduce((sum,p) => sum + currentDays(p), 0);
+  const totalPeaceMs = active.reduce((sum,p) => sum + currentStreakMs(p), 0);
+  const combined = formatCombinedPeace(totalPeaceMs);
   const best = Math.max(0, ...state.people.map(bestDays));
 
   app.innerHTML = `
@@ -70,7 +72,7 @@ renderDashboard = function renderDashboardWithPeaceScore() {
       </header>
 
       <section class="hero-stats">
-        <div><span>${totalPeaceDays}</span><small>combined peace days</small></div>
+        <div><span>${combined.primary}<em class="peace-hours">${combined.secondary}</em></span><small>${combined.label}</small></div>
         <div><span>${best}</span><small>best streak ever</small></div>
       </section>
 
@@ -128,10 +130,8 @@ function leaderboardRowV2(row, i) {
 
 const leaderboardStyle = document.createElement('style');
 leaderboardStyle.textContent = `
-.leaderboard-explainer{display:block;color:var(--muted);font-size:10px;font-weight:700;margin-top:5px;letter-spacing:.02em}.leader-score.peace-score strong{font-size:25px}.leader-score.peace-score small{white-space:nowrap}.leader-name small{line-height:1.35}
+.leaderboard-explainer{display:block;color:var(--muted);font-size:10px;font-weight:700;margin-top:5px;letter-spacing:.02em}.leader-score.peace-score strong{font-size:25px}.leader-score.peace-score small{white-space:nowrap}.leader-name small{line-height:1.35}.hero-stats .peace-hours{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:.42em;font-style:normal;font-weight:800;margin-left:5px;letter-spacing:0}
 `;
 document.head.append(leaderboardStyle);
 
-// app.js renders once before this module loads. Re-render after installing the
-// corrected ranking logic; journal/insight observers will redecorate afterward.
 if (state.onboardingComplete) render();
