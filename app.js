@@ -145,7 +145,7 @@ function renderDashboard() {
       <header class="topbar">
         <div>
           <p class="eyebrow">FAMILY PEACE SCOREBOARD</p>
-          <h1 class="logo-title">Days Since<br><span>We Fought</span></h1>
+          <h1 class="logo-title">Days Since<br><br><span>We Fought</span></h1>
         </div>
         <button id="settingsBtn" class="round-btn" aria-label="Settings">⚙</button>
       </header>
