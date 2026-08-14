@@ -14,7 +14,10 @@ function renderCombinedPeaceTime() {
   const totalHours = Math.floor(totalMs / 3600000);
   const days = Math.floor(totalHours / 24);
   const hours = totalHours % 24;
+  const value = `${days}d ${hours}h`;
 
+  if (stat.dataset.combinedPeaceValue === value) return;
+  stat.dataset.combinedPeaceValue = value;
   stat.innerHTML = `<span>${days}<small class="combined-hours">d ${hours}h</small></span><small>combined peace time</small>`;
 }
 
@@ -22,8 +25,11 @@ const combinedPeaceStyle = document.createElement('style');
 combinedPeaceStyle.textContent = `.hero-stats .combined-hours{display:inline;color:#fff;font-family:inherit;font-size:.42em;font-weight:800;letter-spacing:0;text-transform:none;margin-left:5px}`;
 document.head.append(combinedPeaceStyle);
 
-const combinedPeaceObserver = new MutationObserver(renderCombinedPeaceTime);
-combinedPeaceObserver.observe(document.querySelector('#app'), { childList: true, subtree: true });
+const appRoot = document.querySelector('#app');
+if (appRoot) {
+  const combinedPeaceObserver = new MutationObserver(renderCombinedPeaceTime);
+  combinedPeaceObserver.observe(appRoot, { childList: true, subtree: true });
+}
 renderCombinedPeaceTime();
 
 // Keep the aggregate hour display current while the app is open.
