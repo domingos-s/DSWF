@@ -1,1 +1,1 @@
-{"name":"Days Since We Fought","short_name":"DSWF","start_url":"./","scope":"./","display":"standalone","background_color":"#f4f1e9","theme_color":"#171717","icons":[{"src":"../icons/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}
+{"name":"Days Since We Fought","short_name":"DSWF","start_url":"./","scope":"./","display":"standalone","background_color":"#f4f1e9","theme_color":"#171717","icons":[{"src":"../icons/DSWF.png","sizes":"1536x1536","type":"image/png","purpose":"any"}]}
