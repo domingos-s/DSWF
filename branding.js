@@ -24,10 +24,10 @@ brandingStyle.textContent = `
 .dswf-app-logo{display:block;object-fit:contain}
 .onboarding .brand-mark{width:86px;height:86px;padding:0;border:0;background:transparent;box-shadow:none;transform:none}
 .onboarding-logo{width:86px;height:86px}
-.dswf-header-logo{width:58px;height:58px;object-fit:contain;flex:0 0 auto}
+.dswf-header-logo{width:116px;height:116px;object-fit:contain;flex:0 0 auto}
 .app-shell .topbar{gap:14px}
 .app-shell .topbar>div{flex:1;min-width:0}
-@media(max-width:520px){.dswf-header-logo{width:48px;height:48px}.app-shell .topbar{gap:10px}}
+@media(max-width:520px){.dswf-header-logo{width:96px;height:96px}.app-shell .topbar{gap:10px}}
 `;
 document.head.append(brandingStyle);
 
