@@ -1,5 +1,8 @@
 const DSWF_ICON_URL = '../icons/DSWF.png';
 
+const manifestLink = document.querySelector('link[rel="manifest"]');
+if (manifestLink) manifestLink.setAttribute('href', './manifest.webmanifest');
+
 function renderDSWFBranding() {
   const onboardingMark = document.querySelector('.onboarding .brand-mark');
   if (onboardingMark && !onboardingMark.querySelector('.dswf-app-logo')) {
