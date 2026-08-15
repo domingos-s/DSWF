@@ -1,6 +1,10 @@
-// DSWF leaderboard v2
-// Rankings use two variables: longer current streaks are better, fewer cumulative fights are better.
-// Composite Peace Score: 75% current streak duration + 25% inverse cumulative fight count.
+// DSWF leaderboard v3
+// Rankings reward sustained peace, fewer cumulative fights, and positive rehabilitation.
+// Base Peace Score: 75% current streak duration + 25% inverse cumulative fight count.
+// Recognition bonus: +2 Peace Score points per recognition. Final score is capped at 100.
+
+const RECOGNITION_PEACE_POINTS = 2;
+const MAX_PEACE_SCORE = 100;
 
 function currentStreakMs(person) {
   return person?.startedAt ? Math.max(0, now() - person.startedAt) : 0;
@@ -10,11 +14,17 @@ function cumulativeFightCount(person) {
   return state.events.filter(event => event.type === 'fight' && event.personId === person.id).length;
 }
 
+function recognitionCountForPeaceScore(person) {
+  const recognitions = Array.isArray(state.recognitions) ? state.recognitions : [];
+  return recognitions.filter(recognition => recognition.personId === person.id).length;
+}
+
 function leaderboardMetrics(people = state.people) {
   const rows = people.map(person => ({
     person,
     streakMs: currentStreakMs(person),
-    fights: cumulativeFightCount(person)
+    fights: cumulativeFightCount(person),
+    recognitions: recognitionCountForPeaceScore(person)
   }));
 
   const maxStreak = Math.max(0, ...rows.map(row => row.streakMs));
@@ -27,12 +37,16 @@ function leaderboardMetrics(people = state.people) {
     const fightComponent = maxFights === minFights
       ? 1
       : (maxFights - row.fights) / (maxFights - minFights);
-    const peaceScore = (streakComponent * 0.75) + (fightComponent * 0.25);
-    return { ...row, streakComponent, fightComponent, peaceScore };
+    const basePeaceScore = ((streakComponent * 0.75) + (fightComponent * 0.25)) * 100;
+    const recognitionBonus = row.recognitions * RECOGNITION_PEACE_POINTS;
+    const peaceScore = Math.min(MAX_PEACE_SCORE, basePeaceScore + recognitionBonus);
+    return { ...row, streakComponent, fightComponent, basePeaceScore, recognitionBonus, peaceScore };
   }).sort((a, b) =>
     b.peaceScore - a.peaceScore ||
+    b.basePeaceScore - a.basePeaceScore ||
     b.streakMs - a.streakMs ||
     a.fights - b.fights ||
+    b.recognitions - a.recognitions ||
     (a.person.createdAt || 0) - (b.person.createdAt || 0)
   );
 }
@@ -84,9 +98,9 @@ renderDashboard = function renderDashboardWithPeaceScore() {
       </section>
 
       <section class="leaderboard-section">
-        <div class="section-heading"><div><p class="eyebrow">LEADERBOARD</p><h2>Peace rankings</h2><small class="leaderboard-explainer">75% current streak · 25% fewer fights</small></div></div>
+        <div class="section-heading"><div><p class="eyebrow">LEADERBOARD</p><h2>Peace rankings</h2><small class="leaderboard-explainer">75% current streak · 25% fewer fights · +${RECOGNITION_PEACE_POINTS} per recognition · max ${MAX_PEACE_SCORE}</small></div></div>
         <div class="leaderboard">
-          ${metrics.map((row,i) => leaderboardRowV2(row,i)).join('')}
+          ${metrics.map((row,i) => leaderboardRowV3(row,i)).join('')}
         </div>
       </section>
 
@@ -109,17 +123,20 @@ renderDashboard = function renderDashboardWithPeaceScore() {
   app.querySelectorAll('[data-edit]').forEach(btn => btn.onclick = () => editPerson(btn.dataset.edit));
 };
 
-function leaderboardRowV2(row, i) {
+function leaderboardRowV3(row, i) {
   const p = row.person;
   const medal = ['🥇','🥈','🥉'][i] || `${i+1}.`;
-  const score = Math.round(row.peaceScore * 100);
+  const score = Math.min(MAX_PEACE_SCORE, Math.round(row.peaceScore));
   const fightLabel = `${row.fights} fight${row.fights === 1 ? '' : 's'}`;
+  const recognitionLabel = row.recognitions
+    ? ` · ${row.recognitions} recognition${row.recognitions === 1 ? '' : 's'} (+${row.recognitionBonus})`
+    : '';
   return `<div class="leader-row">
     <span class="rank">${medal}</span>
     ${avatar(p,'sm')}
     <div class="leader-name">
       <strong>${escapeHtml(p.name)}</strong>
-      <small>${formatLeaderboardStreak(row.streakMs)} current · ${fightLabel}</small>
+      <small>${formatLeaderboardStreak(row.streakMs)} current · ${fightLabel}${recognitionLabel}</small>
     </div>
     <div class="leader-score peace-score">
       <strong>${score}</strong>
