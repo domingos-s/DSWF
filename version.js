@@ -1,6 +1,6 @@
 // DSWF release/version footer.
-const DSWF_VERSION = '1.6';
-const DSWF_LATEST_FEATURE = 'Relationship Profiles: positive recognition, good-moment history, and individual badge logs';
+const DSWF_VERSION = '1.7';
+const DSWF_LATEST_FEATURE = 'Rehabilitation credit: recognitions add +2 Peace Score points, capped at 100';
 
 function renderVersionFooter() {
   if (!state.onboardingComplete) return;
