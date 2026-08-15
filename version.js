@@ -1,6 +1,6 @@
 // DSWF release/version footer.
-const DSWF_VERSION = '1.5';
-const DSWF_LATEST_FEATURE = 'Simmer Down History: visible intervention log, check-ins, and outcomes';
+const DSWF_VERSION = '1.6';
+const DSWF_LATEST_FEATURE = 'Relationship Profiles: positive recognition, good-moment history, and individual badge logs';
 
 function renderVersionFooter() {
   if (!state.onboardingComplete) return;
