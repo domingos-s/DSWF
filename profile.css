@@ -1,0 +1,12 @@
+/* Relationship profile surface must be fully opaque so dashboard content never bleeds through. */
+.person-profile-backdrop{
+  background:var(--bg);
+  backdrop-filter:none;
+}
+.person-profile-page{
+  background:var(--bg);
+}
+.profile-nav{
+  background:var(--bg);
+  backdrop-filter:none;
+}
