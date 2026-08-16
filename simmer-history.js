@@ -98,7 +98,7 @@ function renderSimmerHistoryUI() {
       <div><p class="eyebrow">SIMMER DOWN LOG</p><h3>${sessions.length} intervention${sessions.length === 1 ? '' : 's'} recorded</h3></div>
       <button type="button" class="text-btn" id="viewSimmerHistory">View all</button>
     </div>
-    <div class="simmer-history-list dashboard">${sessions.slice(0, 3).map(session => simmerHistoryRow(session, true)).join('')}</div>
+    <div class="simmer-history-list dashboard">${sessions.slice(0, 2).map(session => simmerHistoryRow(session, true)).join('')}</div>
     ${!latest.outcome ? '<div class="simmer-history-note">This intervention is saved now. “Fires Put Out” only increases after you confirm the outcome.</div>' : ''}`;
 
   section.querySelector('#viewSimmerHistory').onclick = openSimmerHistory;
