@@ -1,6 +1,6 @@
 // DSWF release/version footer.
-const DSWF_VERSION = '1.9';
-const DSWF_LATEST_FEATURE = 'Activity log controls: confirmed deletion for Simmer Down and Recognition records';
+const DSWF_VERSION = '2.0';
+const DSWF_LATEST_FEATURE = 'Export to AI: portable DSWF relationship data with embedded DSWF Assistant instructions';
 
 function renderVersionFooter() {
   if (!state.onboardingComplete) return;
