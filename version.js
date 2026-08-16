@@ -1,6 +1,6 @@
 // DSWF release/version footer.
-const DSWF_VERSION = '1.7';
-const DSWF_LATEST_FEATURE = 'Rehabilitation credit: recognitions add +2 Peace Score points, capped at 100';
+const DSWF_VERSION = '1.8';
+const DSWF_LATEST_FEATURE = 'Compact activity logs: two-item Simmer Down and Recognition logs with full history';
 
 function renderVersionFooter() {
   if (!state.onboardingComplete) return;
