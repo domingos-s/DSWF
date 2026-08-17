@@ -51,13 +51,15 @@
     try {
       const registration = await ensureRootServiceWorker();
       if (!registration) return false;
+      const appUrl = new URL('app/', registration.scope).href;
+      const iconUrl = new URL('icons/DSWF.png', registration.scope).href;
       await registration.showNotification(title, {
         body,
         tag,
         renotify: false,
-        icon: '../icons/DSWF.png',
-        badge: '../icons/DSWF.png',
-        data: { url: './', ...data }
+        icon: iconUrl,
+        badge: iconUrl,
+        data: { url: appUrl, ...data }
       });
       return true;
     } catch (error) {
@@ -83,8 +85,6 @@
     const today = localDayKey();
     const hour = new Date().getHours();
 
-    // Avoid an early-morning interruption. If DSWF is opened after 8am and today's check-in is incomplete,
-    // send one reminder for the local calendar day.
     if (prefs.dailyCheckIn && hour >= 8 && !hasTodaysCheckIn() && meta.dailyCheckInReminderDay !== today) {
       const sent = await showDSWFNotification(
         'How are you doing today?',
@@ -236,7 +236,6 @@
   `;
   document.head.appendChild(style);
 
-  // Re-check when the dashboard changes, the tab becomes active, or enough time passes while open.
   const app = document.querySelector('#app');
   if (app) new MutationObserver(() => queueMicrotask(refreshNotificationNudge)).observe(app, { childList:true, subtree:false });
   document.addEventListener('visibilitychange', () => {
