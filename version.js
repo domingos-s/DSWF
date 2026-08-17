@@ -1,6 +1,6 @@
 // DSWF release/version footer.
-const DSWF_VERSION = '2.0';
-const DSWF_LATEST_FEATURE = 'Export to AI: portable DSWF relationship data with embedded DSWF Assistant instructions';
+const DSWF_VERSION = '2.1';
+const DSWF_LATEST_FEATURE = 'Absolute Peace Score: realistic streak progression, fight penalties, and recognition rehabilitation';
 
 function renderVersionFooter() {
   if (!state.onboardingComplete) return;
