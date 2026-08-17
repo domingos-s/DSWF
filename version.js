@@ -1,6 +1,6 @@
 // DSWF release/version footer.
-const DSWF_VERSION = '2.2';
-const DSWF_LATEST_FEATURE = 'Daily Check-In: interactive relationship temperature, personalized patterns, and trend history';
+const DSWF_VERSION = '2.2.1';
+const DSWF_LATEST_FEATURE = 'Daily Check-In polish: clear, human-readable drivers in Today’s Read';
 
 function renderVersionFooter() {
   if (!state.onboardingComplete) return;
