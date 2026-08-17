@@ -1,6 +1,6 @@
 // DSWF release/version footer.
-const DSWF_VERSION = '2.2.1';
-const DSWF_LATEST_FEATURE = 'Daily Check-In polish: clear, human-readable drivers in Today’s Read';
+const DSWF_VERSION = '2.3';
+const DSWF_LATEST_FEATURE = 'Notifications: Daily Check-In and active experiment reminders with user-controlled preferences';
 
 function renderVersionFooter() {
   if (!state.onboardingComplete) return;
@@ -28,8 +28,8 @@ async function refreshDSWFApp() {
 
   try {
     if ('serviceWorker' in navigator) {
-      const registration = await navigator.serviceWorker.getRegistration();
-      if (registration) await registration.unregister();
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(registrations.map(registration => registration.unregister()));
     }
 
     const url = new URL(window.location.href);
