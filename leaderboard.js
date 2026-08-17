@@ -1,10 +1,24 @@
-// DSWF leaderboard v3
-// Rankings reward sustained peace, fewer cumulative fights, and positive rehabilitation.
-// Base Peace Score: 75% current streak duration + 25% inverse cumulative fight count.
-// Recognition bonus: +2 Peace Score points per recognition. Final score is capped at 100.
+// DSWF leaderboard v4
+// Peace Score is absolute rather than relative to other family members.
+// Score = absolute current-streak score - cumulative fight penalty + recognition rehabilitation.
 
 const RECOGNITION_PEACE_POINTS = 2;
+const FIGHT_PEACE_PENALTY = 3;
+const MAX_FIGHT_PENALTY = 30;
 const MAX_PEACE_SCORE = 100;
+
+// Absolute streak progression. Scores between milestones are linearly interpolated.
+// A running streak starts at 25, reaches 35 after 1 full day, 50 at 3 days,
+// 65 at 7, 80 at 14, 95 at 30, and 100 at 60 days.
+const PEACE_STREAK_CURVE = [
+  [0, 25],
+  [1, 35],
+  [3, 50],
+  [7, 65],
+  [14, 80],
+  [30, 95],
+  [60, 100]
+];
 
 function currentStreakMs(person) {
   return person?.startedAt ? Math.max(0, now() - person.startedAt) : 0;
@@ -19,31 +33,46 @@ function recognitionCountForPeaceScore(person) {
   return recognitions.filter(recognition => recognition.personId === person.id).length;
 }
 
+function absoluteStreakPeaceScore(person, streakMs = currentStreakMs(person)) {
+  if (!person?.startedAt) return 0;
+  const days = Math.max(0, streakMs / DAY);
+
+  for (let i = 0; i < PEACE_STREAK_CURVE.length - 1; i++) {
+    const [startDay, startScore] = PEACE_STREAK_CURVE[i];
+    const [endDay, endScore] = PEACE_STREAK_CURVE[i + 1];
+    if (days <= endDay) {
+      const progress = (days - startDay) / (endDay - startDay);
+      return startScore + Math.max(0, Math.min(1, progress)) * (endScore - startScore);
+    }
+  }
+
+  return MAX_PEACE_SCORE;
+}
+
 function leaderboardMetrics(people = state.people) {
-  const rows = people.map(person => ({
-    person,
-    streakMs: currentStreakMs(person),
-    fights: cumulativeFightCount(person),
-    recognitions: recognitionCountForPeaceScore(person)
-  }));
+  return people.map(person => {
+    const streakMs = currentStreakMs(person);
+    const fights = cumulativeFightCount(person);
+    const recognitions = recognitionCountForPeaceScore(person);
+    const streakScore = absoluteStreakPeaceScore(person, streakMs);
+    const fightPenalty = Math.min(MAX_FIGHT_PENALTY, fights * FIGHT_PEACE_PENALTY);
+    const recognitionBonus = recognitions * RECOGNITION_PEACE_POINTS;
+    const basePeaceScore = Math.max(0, streakScore - fightPenalty);
+    const peaceScore = Math.max(0, Math.min(MAX_PEACE_SCORE, basePeaceScore + recognitionBonus));
 
-  const maxStreak = Math.max(0, ...rows.map(row => row.streakMs));
-  const fightValues = rows.map(row => row.fights);
-  const minFights = fightValues.length ? Math.min(...fightValues) : 0;
-  const maxFights = fightValues.length ? Math.max(...fightValues) : 0;
-
-  return rows.map(row => {
-    const streakComponent = maxStreak > 0 ? row.streakMs / maxStreak : 0;
-    const fightComponent = maxFights === minFights
-      ? 1
-      : (maxFights - row.fights) / (maxFights - minFights);
-    const basePeaceScore = ((streakComponent * 0.75) + (fightComponent * 0.25)) * 100;
-    const recognitionBonus = row.recognitions * RECOGNITION_PEACE_POINTS;
-    const peaceScore = Math.min(MAX_PEACE_SCORE, basePeaceScore + recognitionBonus);
-    return { ...row, streakComponent, fightComponent, basePeaceScore, recognitionBonus, peaceScore };
+    return {
+      person,
+      streakMs,
+      fights,
+      recognitions,
+      streakScore,
+      fightPenalty,
+      recognitionBonus,
+      basePeaceScore,
+      peaceScore
+    };
   }).sort((a, b) =>
     b.peaceScore - a.peaceScore ||
-    b.basePeaceScore - a.basePeaceScore ||
     b.streakMs - a.streakMs ||
     a.fights - b.fights ||
     b.recognitions - a.recognitions ||
@@ -98,7 +127,7 @@ renderDashboard = function renderDashboardWithPeaceScore() {
       </section>
 
       <section class="leaderboard-section">
-        <div class="section-heading"><div><p class="eyebrow">LEADERBOARD</p><h2>Peace rankings</h2><small class="leaderboard-explainer">75% current streak · 25% fewer fights · +${RECOGNITION_PEACE_POINTS} per recognition · max ${MAX_PEACE_SCORE}</small></div></div>
+        <div class="section-heading"><div><p class="eyebrow">LEADERBOARD</p><h2>Peace rankings</h2><small class="leaderboard-explainer">Absolute streak score · −${FIGHT_PEACE_PENALTY} per fight (max −${MAX_FIGHT_PENALTY}) · +${RECOGNITION_PEACE_POINTS} per recognition · max ${MAX_PEACE_SCORE}</small></div></div>
         <div class="leaderboard">
           ${metrics.map((row,i) => leaderboardRowV3(row,i)).join('')}
         </div>
@@ -116,7 +145,7 @@ renderDashboard = function renderDashboardWithPeaceScore() {
     state.people.push({ ...person, id: id(), startedAt: null, completedStreaks: [], createdAt: now() });
     saveState(); render();
   });
-  document.querySelector('#settingsBtn').onclick = openSettings;
+  document.querySelector('#settingsBtn').onclick = () => openSettings();
 
   app.querySelectorAll('[data-start]').forEach(btn => btn.onclick = () => startStreak(btn.dataset.start));
   app.querySelectorAll('[data-fight]').forEach(btn => btn.onclick = () => confirmFight(btn.dataset.fight));
@@ -127,7 +156,7 @@ function leaderboardRowV3(row, i) {
   const p = row.person;
   const medal = ['🥇','🥈','🥉'][i] || `${i+1}.`;
   const score = Math.min(MAX_PEACE_SCORE, Math.round(row.peaceScore));
-  const fightLabel = `${row.fights} fight${row.fights === 1 ? '' : 's'}`;
+  const fightLabel = `${row.fights} fight${row.fights === 1 ? '' : 's'} (−${row.fightPenalty})`;
   const recognitionLabel = row.recognitions
     ? ` · ${row.recognitions} recognition${row.recognitions === 1 ? '' : 's'} (+${row.recognitionBonus})`
     : '';
