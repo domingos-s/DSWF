@@ -1,6 +1,6 @@
 // DSWF release/version footer.
-const DSWF_VERSION = '2.1';
-const DSWF_LATEST_FEATURE = 'Absolute Peace Score: realistic streak progression, fight penalties, and recognition rehabilitation';
+const DSWF_VERSION = '2.2';
+const DSWF_LATEST_FEATURE = 'Daily Check-In: interactive relationship temperature, personalized patterns, and trend history';
 
 function renderVersionFooter() {
   if (!state.onboardingComplete) return;
