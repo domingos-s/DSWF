@@ -1,6 +1,6 @@
 // DSWF release/version footer.
-const DSWF_VERSION = '2.4';
-const DSWF_LATEST_FEATURE = 'Relationship changes: profile commitments with How did it go? implementation journals';
+const DSWF_VERSION = '2.5';
+const DSWF_LATEST_FEATURE = 'Export to AI: one evidence-based “A change I can make is:” recommendation per relationship';
 
 function renderVersionFooter() {
   if (!state.onboardingComplete) return;
