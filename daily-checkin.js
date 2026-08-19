@@ -183,6 +183,9 @@
     renderDailyQuestion();
   }
 
+  // Public launcher for state-aware surfaces such as the behavioral-loop dashboard.
+  window.dswfOpenDailyCheckIn = openDailyCheckIn;
+
   function createDailyModal() {
     document.querySelector('#dailyCheckInModal')?.remove();
     const modal = document.createElement('div');
