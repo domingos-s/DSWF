@@ -1,6 +1,6 @@
 // DSWF release/version footer.
-const DSWF_VERSION = '2.3';
-const DSWF_LATEST_FEATURE = 'Notifications: Daily Check-In and active experiment reminders with user-controlled preferences';
+const DSWF_VERSION = '2.4';
+const DSWF_LATEST_FEATURE = 'Relationship changes: profile commitments with How did it go? implementation journals';
 
 function renderVersionFooter() {
   if (!state.onboardingComplete) return;
