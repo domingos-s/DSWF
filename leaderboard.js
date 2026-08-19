@@ -91,7 +91,7 @@ function formatCombinedPeace(ms) {
   const totalHours = Math.max(0, Math.floor(ms / 3600000));
   const days = Math.floor(totalHours / 24);
   const hours = totalHours % 24;
-  if (days > 0) return { primary: days, secondary: `${hours}h`, label: 'combined peace time' };
+  if (days > 0) return { primary: `${days}d`, secondary: `${hours}h`, label: 'combined peace time' };
   return { primary: hours, secondary: 'h', label: 'combined peace time' };
 }
 
