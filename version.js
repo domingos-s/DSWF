@@ -1,6 +1,6 @@
 // DSWF release/version footer.
-const DSWF_VERSION = '3.0';
-const DSWF_LATEST_FEATURE = 'Behavioral loop dashboard: Before → During → After → Learn';
+const DSWF_VERSION = '3.0.1';
+const DSWF_LATEST_FEATURE = 'Android Back navigation: unwind modals and profiles before leaving DSWF';
 
 function renderVersionFooter() {
   if (!state.onboardingComplete) return;
