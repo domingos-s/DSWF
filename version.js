@@ -1,6 +1,6 @@
 // DSWF release/version footer.
-const DSWF_VERSION = '2.5';
-const DSWF_LATEST_FEATURE = 'Export to AI: one evidence-based “A change I can make is:” recommendation per relationship';
+const DSWF_VERSION = '3.0';
+const DSWF_LATEST_FEATURE = 'Behavioral loop dashboard: Before → During → After → Learn';
 
 function renderVersionFooter() {
   if (!state.onboardingComplete) return;
